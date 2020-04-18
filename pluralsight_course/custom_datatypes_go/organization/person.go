@@ -16,9 +16,51 @@ type Handler struct {
 	name   string
 }
 
+type Citizen interface {
+	Identifiable
+	Country() string
+}
+
 type Name struct {
 	firstName string
 	lastName  string
+}
+
+// Adding Social Security Numbers
+type socialSecurityNumber string
+
+// constructor for SocialSecurityNumber
+func NewSocialSecurityNumber(ssn string) Citizen {
+	return socialSecurityNumber(ssn)
+}
+
+func (ssn socialSecurityNumber) ID() string {
+	return string(ssn)
+}
+
+func (ssn socialSecurityNumber) Country() string {
+	return "World"
+}
+
+// For European Union Identifier
+type europeanUnionIdentifier struct {
+	europeanUnionId string
+	country         string
+}
+
+func NewEuropeanUnionIdentifier(europeanUnionId, country string) Citizen {
+	return europeanUnionIdentifier{
+		europeanUnionId: europeanUnionId,
+		country:         country,
+	}
+}
+
+func (eu europeanUnionIdentifier) ID() string {
+	return eu.europeanUnionId
+}
+
+func (eu europeanUnionIdentifier) Country() string {
+	return fmt.Sprintf("Country : %s", eu.country)
 }
 
 // type TwitterHandler = string // type alias // copy the fields and method sets // not able to extend the type
@@ -45,14 +87,16 @@ type Person struct {
 	//name Name
 	Name
 	twitterHandler TwitterHandler
+	Citizen
 }
 
 // go does not support constructor
 //so ...
-func NewPerson(firstName, lastName string) *Person {
+func NewPerson(firstName, lastName string, citizen Citizen) *Person {
 	return &Person{
 		//name: Name{firstName: firstName,lastName: lastName},
-		Name: Name{firstName: firstName, lastName: lastName},
+		Name:    Name{firstName: firstName, lastName: lastName},
+		Citizen: citizen,
 	}
 }
 
@@ -64,7 +108,8 @@ func (name *Name) FullName() string {
 }
 
 func (person *Person) ID() string {
-	return "123456"
+	//return "123456"
+	return fmt.Sprintf("Social Security Number : %s", person.Citizen.ID())
 }
 
 func (person *Person) SetTwitterHandler(handler TwitterHandler) error {

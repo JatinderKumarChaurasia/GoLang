@@ -3,11 +3,17 @@ package organization
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
 //interface
 type Identifiable interface {
+	ID() string
+}
+
+// checking for method conflict
+type Conflict interface {
 	ID() string
 }
 
@@ -22,7 +28,7 @@ type Citizen interface {
 }
 
 type Name struct {
-	firstName string
+	FirstName string
 	lastName  string
 }
 
@@ -45,13 +51,39 @@ func (ssn socialSecurityNumber) Country() string {
 // For European Union Identifier
 type europeanUnionIdentifier struct {
 	europeanUnionId string
-	country         string
+	//country         []string
+	country string
 }
 
-func NewEuropeanUnionIdentifier(europeanUnionId, country string) Citizen {
-	return europeanUnionIdentifier{
-		europeanUnionId: europeanUnionId,
-		country:         country,
+//func NewEuropeanUnionIdentifier(europeanUnionId, country string) Citizen {
+//	return europeanUnionIdentifier{
+//		europeanUnionId: europeanUnionId,
+//		country:         country,
+//	}
+//}
+
+func NewEuropeanUnionIdentifier(europeanUnionId interface{}, country string) Citizen {
+	switch valueID := europeanUnionId.(type) {
+	case string:
+		return europeanUnionIdentifier{
+			//europeanUnionId: europeanUnionId.(string) ,
+			europeanUnionId: valueID,
+			//country:         []string{country},
+			country: country,
+		}
+	case int:
+		return europeanUnionIdentifier{
+			europeanUnionId: strconv.Itoa(valueID),
+			//country: []string{country},
+			country: country,
+		}
+	case europeanUnionIdentifier:
+		return valueID
+	case Person:
+		eUID, _ := valueID.Citizen.(europeanUnionIdentifier)
+		return eUID
+	default:
+		panic("Using an invalid type to input european ID")
 	}
 }
 
@@ -88,6 +120,7 @@ type Person struct {
 	Name
 	twitterHandler TwitterHandler
 	Citizen
+	Conflict
 }
 
 // go does not support constructor
@@ -95,7 +128,7 @@ type Person struct {
 func NewPerson(firstName, lastName string, citizen Citizen) *Person {
 	return &Person{
 		//name: Name{firstName: firstName,lastName: lastName},
-		Name:    Name{firstName: firstName, lastName: lastName},
+		Name:    Name{FirstName: firstName, lastName: lastName},
 		Citizen: citizen,
 	}
 }
@@ -103,7 +136,7 @@ func NewPerson(firstName, lastName string, citizen Citizen) *Person {
 //func (person *Person) FullName() string {
 func (name *Name) FullName() string {
 	//return fmt.Sprintf("%s %s", person.name.firstName, person.name.lastName)
-	return fmt.Sprintf("%s %s", name.firstName, name.lastName)
+	return fmt.Sprintf("%s %s", name.FirstName, name.lastName)
 
 }
 

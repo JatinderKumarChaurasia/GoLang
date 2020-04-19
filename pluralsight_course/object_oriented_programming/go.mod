@@ -1,3 +1,3 @@
-module github.com/pluralsight-object-oriented/objectoriented
+module github.com/pluralsight-course/objectoriented
 
 go 1.14

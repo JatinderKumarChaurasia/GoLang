@@ -23,7 +23,7 @@ type CreditCard struct {
 // Card Number Pattern
 var creditCardNumberPattern = regexp.MustCompile("\\d{4}-\\d{4}-\\d{4}-\\d{4}")
 
-func NewCreditCardAccountOpen(ownerName, cardNumber string, expirationMonth, expirationYear, securityCode int ,chargeCH chan float64) *CreditCard {
+func NewCreditCardAccountOpen(ownerName, cardNumber string, expirationMonth, expirationYear, securityCode int, chargeCH chan float64) *CreditCard {
 	creditAccount := &CreditCard{
 		ownerName:       ownerName,
 		cardNumber:      cardNumber,
@@ -34,7 +34,7 @@ func NewCreditCardAccountOpen(ownerName, cardNumber string, expirationMonth, exp
 	go func(chargeCH chan float64) {
 		fmt.Println("Processing Card Payment ...... ... ")
 		for amount := range chargeCH {
-			fmt.Printf("For Amount : %v Procssing Payment ",amount)
+			fmt.Printf("For Amount : %v Procssing Payment ", amount)
 			creditAccount.ProcessCardPayment(amount)
 		}
 	}(chargeCH)
@@ -93,7 +93,7 @@ func (creditCard CreditCard) GetAvailableCreditCardBalance() float64 {
 }
 
 // Payment Process Methods
-func (creditCard *CreditCard) ProcessCardPayment(amount float64) bool  {
+func (creditCard *CreditCard) ProcessCardPayment(amount float64) bool {
 	fmt.Println("Processing Credit Card Payment ............")
 	return true
 }

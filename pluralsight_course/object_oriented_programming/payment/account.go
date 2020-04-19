@@ -23,7 +23,7 @@ func (credit *CreditAccount) GetAvailableFunds() float64 {
 	return 0.0
 }
 
-type CheckingAccount struct {}
+type CheckingAccount struct{}
 
 func (checking CheckingAccount) GetAvailableFunds() float64 {
 	fmt.Println("Getting Checking Account Available Funds ............................... ")
